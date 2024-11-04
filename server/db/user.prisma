@@ -1,0 +1,22 @@
+enum UserStatus {
+    Passive
+    Active
+}
+
+model User {
+    id Int @id @default(autoincrement())
+
+    username      String  @unique
+    email         String? @unique
+    permission    Int     @default(0)
+    password_hash String
+    
+    status UserStatus @default(Active)
+
+    created_at DateTime @default(now())
+    created_by_id Int?
+    updated_at DateTime @updatedAt
+    updated_by_id Int?
+    deleted_at DateTime?
+    deleted_by_id Int?
+}
