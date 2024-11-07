@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { prisma } from "../../../database";
-import { THandler } from "../../../typings/handler";
+import type { Handler } from "hono";
 import { sign } from "hono/jwt";
 import crypto from "crypto";
 
@@ -10,8 +10,7 @@ const scheme = z.object({
     password: z.string().max(64).transform((r) => crypto.createHash("sha256").update(r).digest('hex'))
 })
 
-export const post: THandler<"/auth/sign-up"> = async (c) => {
-
+export const post: Handler = async (c) => {
     const body = await scheme.parseAsync(await c.req.json().catch(() => null)).catch((error) => ({ error }));
 
     if ("error" in body) {
@@ -41,7 +40,7 @@ export const post: THandler<"/auth/sign-up"> = async (c) => {
             error: {
                 code: 10_001,
                 message: "Fields must be unique",
-                fields: user.error.meta.target // ["username", "email"]
+                fields: user.error.meta.target
             }
         }, 400)
     }
